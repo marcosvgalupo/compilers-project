@@ -14,7 +14,7 @@ novalinha    [\n]
 
 %%
 programa                return T_PROGRAMA;
-inicio                   return T_INICIO;
+inicio                  return T_INICIO;
 fimprograma             return T_FIM;
 leia                    return T_LEIA;
 escreva                 return T_ESCREVA;
@@ -25,6 +25,8 @@ fimse                   return T_FIMSE;
 enquanto                return T_ENQTO;
 faca                    return T_FACA;
 fimenquanto             return T_FIMENQTO;
+def                     return T_DEF;
+fimdef                  return T_FIMDEF;
 "+"                     return T_MAIS;
 "-"                     return T_MENOS;
 "*"                     return T_VEZES;
@@ -42,6 +44,8 @@ inteiro                 return T_INTEIRO;
 logico                  return T_LOGICO;
 V                       return T_V;
 F                       return T_F;
+registro                return T_REGISTRO;
+
 
 "//".*                  /* nada */
 "/*"                    BEGIN(coment);

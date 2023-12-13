@@ -15,6 +15,7 @@ int tam; // tamanho da estrutura qdo percorre expressão de acesso
 int des; // deslocamento para chegar no campo
 int pos; // posicao do tipo na tabela de simbolos
 int indice;
+ptno lista_de_campos;
 %}
 
 %token T_PROGRAMA
@@ -140,7 +141,8 @@ definicoes
 define 
    : T_DEF
         {
-            listaCampos * lista_de_campos;
+            lista_de_campos = NULL;
+            elemTab.listaDeCampos = NULL;
             // TODO #3
             // Iniciar a lista de campos
         } 
@@ -149,11 +151,13 @@ define
            // TODO #4
            // Inserir esse novo tipo na tabela de simbolos
            // com a lista que foi montada
-            strcpy(elemTab.id, atomo); //guarda o identificador encontrado na tabela
+            strcpy(elemTab.id, atomo); //guarda o identificador encontrado no elemento
             elemTab.end = -1;
             elemTab.tip = REG;
-
-
+            elemTab.listaDeCampos = lista_de_campos; 
+            elemTab.tam = tamRegistro(lista_de_campos);
+            elemTab.pos = pos;
+            insereSimbolo(elemTab);
        }
    ;
 
@@ -170,10 +174,12 @@ lista_campos
          // esta sendo construida
          // o deslocamento (endereço) do próximo campo
          // será o deslocamento anterior mais o tamanho desse campo
+
+         lista_de_campos = insere(lista_de_campos, atomo, tipo, pos, tam);
       }
    | T_IDENTIF
       {
-        // idem
+         lista_de_campos = insere(lista_de_campos, atomo, tipo, pos, tam);
       }
    ;
 
