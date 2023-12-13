@@ -9,13 +9,74 @@ enum
 
 #define TAM_TAB 100
 
-typedef struct listaCampos{
-    char nome[100];
+#include <stdio.h>
+#include <stdlib.h>
+
+
+typedef struct listaCampos * ptno;
+
+struct listaCampos{
+    char id[100];
     int tip;
     int posicao;
     int deslocamento;
     int tamanho;
-}listaCampos;
+    ptno prox;
+};
+
+ptno insere(ptno L, char id[100], int tipo, int posicao, int tamanho) {
+    ptno p, new;
+    new = (ptno)malloc(sizeof(struct listaCampos));
+    strcpy(new->id, id);
+    new->tip = tipo;
+    new->posicao = posicao;
+    new->tamanho = tamanho;
+    new->prox = NULL;
+    p = L;
+    while (p && p->prox)
+        p = p->prox;
+    if (p)
+        p->prox = new;
+    else
+        L = new;
+    return L;
+}
+
+// ptno busca(ptno L, char info)
+// {
+//     while (L && L->info != info)
+//         L = L->prox;
+//     return L;
+// }
+
+void mostra(ptno L)
+{
+    while (L)
+    {
+        printf("(");
+        if (L->prox){
+            printf("%s,%d,%d,%d,%d", L->id, L->tip, L->posicao, L->deslocamento, L->tamanho);
+            printf(") => ");
+        }
+        else{
+            printf("%s,%d,%d,%d,%d", L->id, L->tip, L->posicao, L->deslocamento, L->tamanho);
+            printf(")");
+        }
+        L = L->prox;
+    }
+}
+
+// int main () {
+//     ptno L = NULL;
+//     L = insere(L, 'b');
+//     L = insere(L, 'a');
+//     L = insere(L, 'x');
+//     mostra(L);
+//     if (busca(L,'c'))
+//         puts("achou");
+//     else
+//         puts("não achou");
+// }
 
 char nomeTipo[3][4]={"INT", "LOG", "REG"};
 
@@ -25,7 +86,7 @@ struct elemTabSimbolos {
     int tip;    //tipo
     int tam;
     int pos;
-    listaCampos * listaDeCampos;
+    ptno listaDeCampos;
 } tabSimb[TAM_TAB], elemTab;
 
 int posTab = 0; // indica a proxima posição livre para inserir
@@ -62,7 +123,7 @@ void mostraTabela (){
     printf("%30s | %3s | %3s | %3s | %3s| %3s\n","ID", "END", "TIPO", "TAM", "POS", "CAMPOS");
     for (int i = 0; i < 50; i++)
         printf("--");
-    for (int i = 0; i < posTab; i++)
+    for (int i = 0; i < posTab; i++){
         printf("\n%30s | %3d | %3s  | %3d | %2d |",
             tabSimb[i].id,
             tabSimb[i].end,
@@ -70,6 +131,10 @@ void mostraTabela (){
             tabSimb[i].tam,
             tabSimb[i].pos
         );
+        if(tabSimb[i].tip == REG){
+            mostra(tabSimb[i].listaDeCampos);
+        }
+    }
     puts(" ");
 }
 
@@ -99,3 +164,15 @@ void testaTipo (int tipo1, int tipo2, int ret) {
         yyerror("Incompatibilidade de tipo!");
     empilha(ret);
 }
+
+
+//retorna o tamanho do tipo da variável atual
+int tamRegistro(ptno lista){
+    int tam = 0;
+    while(lista){
+        tam +=  (lista->tip == INT) ?  1 :
+                (lista->tip == LOG) ?  1 :
+                (lista->tip == REG) ? 2 : 0;
+        lista = lista->prox; 
+    }
+} 
