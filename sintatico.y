@@ -14,7 +14,7 @@ int tipo;
 int tam; // tamanho da estrutura qdo percorre expressão de acesso
 int des; // deslocamento para chegar no campo
 int pos; // posicao do tipo na tabela de simbolos
-int indice;
+int indice; //indice do simbolo na tabela de símbolos
 ptno lista_de_campos;
 %}
 
@@ -154,9 +154,9 @@ define
             strcpy(elemTab.id, atomo); //guarda o identificador encontrado no elemento
             elemTab.end = -1;
             elemTab.tip = REG;
-            elemTab.listaDeCampos = lista_de_campos; 
-            elemTab.tam = tamRegistro(lista_de_campos);
-            elemTab.pos = pos;
+            elemTab.listaDeCampos = lista_de_campos;
+            elemTab.tam = tamRegistro(elemTab.listaDeCampos);
+            elemTab.pos = elemTab.pos + 1; // incrementa a posição do elemento anterior
             insereSimbolo(elemTab);
        }
    ;
@@ -179,6 +179,7 @@ lista_campos
       }
    | T_IDENTIF
       {
+ 
          lista_de_campos = insere(lista_de_campos, atomo, tipo, pos, tam);
       }
    ;
@@ -198,7 +199,7 @@ lista_variaveis
      T_IDENTIF 
         { 
             strcpy(elemTab.id, atomo);
-            elemTab.end = contaVar;
+            elemTab.end += elemTab.tam;
             elemTab.tip = tipo;
             elemTab.tam = tam;
             elemTab.pos = pos;
@@ -208,7 +209,7 @@ lista_variaveis
             // TODO #7
             // Se a variavel for registro
             // contaVar = contaVar + TAM (tamanho do registro)
-            if(ehRegistro){
+            if(tipo == 2){
                contaVar = contaVar + tam;
             }
             else contaVar++;
@@ -216,11 +217,15 @@ lista_variaveis
    | T_IDENTIF
        { 
             strcpy(elemTab.id, atomo);
-            elemTab.end = contaVar;
             elemTab.tip = tipo;
-            elemTab.tam = tam;
             elemTab.pos = pos;
-            // idem
+
+            if (elemTab.end == -1)
+               elemTab.end++;
+            else
+               elemTab.end += elemTab.tam;
+
+            elemTab.tam = tam;
             insereSimbolo (elemTab);
             contaVar++;
             // bidem 

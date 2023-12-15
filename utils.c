@@ -1,5 +1,10 @@
 // Tabela de Simbolos
 
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TAM_TAB 100
+
 enum 
 {
     INT,
@@ -7,11 +12,8 @@ enum
     REG
 };
 
-#define TAM_TAB 100
 
-#include <stdio.h>
-#include <stdlib.h>
-
+char nomeTipo[3][4]={"INT", "LOG", "REG"};
 
 typedef struct listaCampos * ptno;
 
@@ -26,19 +28,27 @@ struct listaCampos{
 
 ptno insere(ptno L, char id[100], int tipo, int posicao, int tamanho) {
     ptno p, new;
+
     new = (ptno)malloc(sizeof(struct listaCampos));
     strcpy(new->id, id);
     new->tip = tipo;
     new->posicao = posicao;
     new->tamanho = tamanho;
     new->prox = NULL;
+    new->deslocamento = 0;
+    
     p = L;
-    while (p && p->prox)
+    while (p && p->prox){
         p = p->prox;
-    if (p)
+    }
+    if (p){
+        new->deslocamento = p->deslocamento + p->tamanho;
         p->prox = new;
-    else
+    }
+    else{
+        new->deslocamento = 0;
         L = new;
+    }
     return L;
 }
 
@@ -55,30 +65,17 @@ void mostra(ptno L)
     {
         printf("(");
         if (L->prox){
-            printf("%s,%d,%d,%d,%d", L->id, L->tip, L->posicao, L->deslocamento, L->tamanho);
+            printf("%s,%s,%d,%d,%d", L->id, nomeTipo[L->tip], L->posicao, L->deslocamento, L->tamanho);
             printf(") => ");
         }
         else{
-            printf("%s,%d,%d,%d,%d", L->id, L->tip, L->posicao, L->deslocamento, L->tamanho);
+            printf("%s,%s,%d,%d,%d", L->id, nomeTipo[L->tip], L->posicao, L->deslocamento, L->tamanho);
             printf(")");
         }
         L = L->prox;
     }
 }
 
-// int main () {
-//     ptno L = NULL;
-//     L = insere(L, 'b');
-//     L = insere(L, 'a');
-//     L = insere(L, 'x');
-//     mostra(L);
-//     if (busca(L,'c'))
-//         puts("achou");
-//     else
-//         puts("não achou");
-// }
-
-char nomeTipo[3][4]={"INT", "LOG", "REG"};
 
 struct elemTabSimbolos {
     char id[100]; // nome do identificador
@@ -138,6 +135,7 @@ void mostraTabela (){
     puts(" ");
 }
 
+
 // Pilha Semantica
 #define TAM_PIL 100
 int pilha[TAM_PIL];
@@ -170,9 +168,8 @@ void testaTipo (int tipo1, int tipo2, int ret) {
 int tamRegistro(ptno lista){
     int tam = 0;
     while(lista){
-        tam +=  (lista->tip == INT) ?  1 :
-                (lista->tip == LOG) ?  1 :
-                (lista->tip == REG) ? 2 : 0;
+        tam += lista->tamanho;
         lista = lista->prox; 
     }
+    return tam;
 } 
