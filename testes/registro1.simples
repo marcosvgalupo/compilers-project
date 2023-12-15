@@ -27,3 +27,5 @@ logico z           //  | +---+  |     5 |       |
                    //  +--------+         (...)
 inicio
 fimprograma
+
+/*Lista campos: id,tipo,pos,des,tam*/
