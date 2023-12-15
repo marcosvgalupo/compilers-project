@@ -174,7 +174,8 @@ lista_campos
          // esta sendo construida
          // o deslocamento (endereço) do próximo campo
          // será o deslocamento anterior mais o tamanho desse campo
-
+         
+         //deslocamento implementado dentro da lista
          lista_de_campos = insere(lista_de_campos, atomo, tipo, pos, tam);
       }
    | T_IDENTIF
@@ -198,19 +199,23 @@ lista_variaveis
    : lista_variaveis
      T_IDENTIF 
         { 
+            // TODO #6 (FEITO)
+            // Tem outros campos para acrescentar na tab. símbolos
             strcpy(elemTab.id, atomo);
             elemTab.end += elemTab.tam;
             elemTab.tip = tipo;
             elemTab.tam = tam;
             elemTab.pos = pos;
-            // TODO #6 (FEITO)
-            // Tem outros campos para acrescentar na tab. símbolos
             insereSimbolo (elemTab); 
+
+
             // TODO #7
             // Se a variavel for registro
             // contaVar = contaVar + TAM (tamanho do registro)
-            if(tipo == 2){
+
+            if(tipo == REG){
                contaVar = contaVar + tam;
+               elemTab.listaDeCampos = tabSimb[elemTab.pos].listaDeCampos;
             }
             else contaVar++;
         }
@@ -220,15 +225,18 @@ lista_variaveis
             elemTab.tip = tipo;
             elemTab.pos = pos;
 
-            if (elemTab.end == -1)
-               elemTab.end++;
-            else
-               elemTab.end += elemTab.tam;
+            // calculo endereço da tabela
+            if (elemTab.end == -1) elemTab.end++;
+            else elemTab.end += elemTab.tam;
+            
+            if(tipo == REG){
+               contaVar = contaVar + tam;
+               elemTab.listaDeCampos = tabSimb[elemTab.pos].listaDeCampos;
+            }
+            else contaVar++;
 
             elemTab.tam = tam;
             insereSimbolo (elemTab);
-            contaVar++;
-            // bidem 
        }
    ;
 
